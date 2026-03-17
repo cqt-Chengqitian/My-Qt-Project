@@ -8,8 +8,8 @@ PDU *mkPDU(uint uiMsglen)
     if(pdu == NULL){
         exit(1);
     }
-    memset(pdu,0,uiPDUlen);//先清空内容
-    pdu->uiMsglen=uiMsglen;//初始化长度
+    memset(pdu,0,uiPDUlen); // 先清空内容
+    pdu->uiMsglen=uiMsglen; // 初始化长度
     pdu->uiPDUlen=uiPDUlen;
     return pdu;
 }

@@ -13,14 +13,13 @@ class MyTcpSocket : public QTcpSocket
 public:
     MyTcpSocket();
     ~MyTcpSocket();
-    QString m_strLoginName;
+    QString m_strLoginName; // 登录的用户名
 public:
-    void recvMsg();
-    void clientOffline();
-    PDU* readMsg();
-    PDU* handleMsg(PDU* pdu);
-    void sendMsg(PDU* pdu);
-    QByteArray buffer;
+    void recvMsg(); // 接收消息
+    void clientOffline(); // 客户端下线
+    PDU* handleMsg(PDU* pdu); // 处理消息，转到reqhandler类中处理
+    void sendMsg(PDU* pdu); // 发送消息
+    QByteArray buffer; // 维护的缓冲区
     ReqHandler rh;
 signals:
     void offLine(MyTcpSocket* mysocket);

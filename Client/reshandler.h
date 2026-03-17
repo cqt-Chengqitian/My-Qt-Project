@@ -10,7 +10,9 @@ class ResHandler
 public:
     ResHandler(PDU* pdu);
     ~ResHandler();
-    PDU* pdu;
+
+    PDU* pdu; // 需要处理的PDU
+
     void regist();
     void login();
     void finduser();
@@ -23,9 +25,8 @@ public:
     void flushfile();
     void movefile();
     void uploadFileInit();
-    void uoloadFileData();
+    void uploadFileData();
     void startUpload();
-
 
 };
 

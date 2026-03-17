@@ -16,9 +16,9 @@ class Friend : public QWidget
 public:
     explicit Friend(QWidget *parent = 0);
     ~Friend();
-    void flushfriend();
-    void updatefriend_Lw(QStringList friendlist);
-    Chat* m_pChat;
+    void flushfriend(); // 刷新好友列表
+    void updatefriend_Lw(QStringList friendlist); // 添加好友到好友列表
+    Chat* m_pChat; // 聊天窗口
 
 private slots:
     void on_find_Pb_clicked();

@@ -18,7 +18,7 @@ Server::~Server()
     delete ui;
 }
 
-void Server::loadconfig()//加载配置
+void Server::loadconfig() // 加载配置
 {
     QFile file(":/server.config");
     if(!file.open(QIODevice::ReadOnly)){
@@ -27,7 +27,7 @@ void Server::loadconfig()//加载配置
     }
     QByteArray baDate = file.readAll();
     QString strData = QString(baDate);
-    QStringList strList = strData.split("\r\n");
+    QStringList strList = strData.split("\r\n"); // 按行分割配置文件内容
     m_strIP = strList.at(0);
     m_usPort = strList.at(1).toUShort();
     m_strRootPath = strList.at(2);

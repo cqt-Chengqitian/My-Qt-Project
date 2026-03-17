@@ -31,7 +31,7 @@ File *Index::getFile()
 
 void Index::on_friend_Pb_clicked()
 {
-    ui->stackedWidget->setCurrentIndex(0);//切换当前的界面,0为第一个
+    ui->stackedWidget->setCurrentIndex(0); // 切换当前的界面,0为第一个
 }
 
 void Index::on_pushButton_2_clicked()

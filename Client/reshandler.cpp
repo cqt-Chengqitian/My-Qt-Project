@@ -2,7 +2,7 @@
 #include <QMessageBox>
 #include "client.h"
 #include "uploader.h"
-#include <index.h>
+#include "index.h"
 
 ResHandler::ResHandler(PDU* pdu)
 {
@@ -30,8 +30,8 @@ void ResHandler::login()
     bool ret;
     memcpy(&ret,pdu->caData,sizeof(ret));
     if(ret){
-        Index::getInstance().show();//登录成功显示用户界面
-        Client::getInstance().hide();//隐藏登录界面
+        Index::getInstance().show(); // 登录成功显示用户界面
+        Client::getInstance().hide(); // 隐藏登录界面
     }else{
         QMessageBox::information(&Client::getInstance(),"登录","登录失败");
     }
@@ -40,16 +40,16 @@ void ResHandler::login()
 void ResHandler::finduser()
 {
     char caName[32]={'\0'};
-    memcpy(caName,pdu->caData+32,32);//取查找的名字
+    memcpy(caName,pdu->caData+32,32); // 取查找的名字
     int ret;
     memcpy(&ret,pdu->caData,sizeof(ret));
     if(ret == 1){
         int ret_add = QMessageBox::information(&Index::getInstance(),"查找用户","用户在线","添加好友","取消");
-        if(ret_add == 0){
+        if(ret_add == 0){ // 选择添加好友，发送消息给服务器
             PDU* pdu =mkPDU();
             pdu->uiMsgtype = ENUM_MSG_TYPE_ADDFRIENT_REQUEST;
             memcpy(pdu->caData,Client::getInstance().m_strLoginName.toStdString().c_str(),32);
-            memcpy(pdu->caData+32,caName,32);
+            memcpy(pdu->caData+32,caName,32); // 放入双方名字
             Client::getInstance().sendMsg(pdu);
         }
     }else if(ret == 0){
@@ -65,12 +65,12 @@ void ResHandler::addfriend()
 {
     bool ret;
     memcpy(&ret,pdu->caData,sizeof(ret));
-    if(!ret){
+    if(!ret){ // 若是服务器判断不满足条件就直接给响应
         QMessageBox::information(&Index::getInstance(),"添加好友","不满足条件");
     }
 }
 
-void ResHandler::addfriendresend()
+void ResHandler::addfriendresend() // 若是满足条件，服务器就直接把消息转发到对应的客户端
 {
     char cacurName[32]={'\0'};
     memcpy(cacurName,pdu->caData,32);
@@ -78,7 +78,7 @@ void ResHandler::addfriendresend()
     if(ret != QMessageBox::Yes){
         return;
     }
-    PDU* respdu = mkPDU();
+    PDU* respdu = mkPDU(); // 同意之后封装发送同意好友请求的消息
     memcpy(respdu->caData,pdu->caData,64);
     respdu->uiMsgtype = ENUM_MSG_TYPE_AGREEADDFRIENT_REQUEST;
     Client::getInstance().sendMsg(respdu);
@@ -103,7 +103,6 @@ void ResHandler::flushfriend()
     for(int i=0;i<pdu->uiMsglen/32;i++){
         memcpy(caTemp,pdu->caMsg+i*32,32);
         friendlist.append(caTemp);
-        qDebug()<<"flushfriend"<<caTemp;
     }
     Index::getInstance().getFriend()->updatefriend_Lw(friendlist);
 }
@@ -118,7 +117,7 @@ void ResHandler::getchat()
     qDebug()<<"接收消息";
     char caChatname[32] = {'\0'};;
     memcpy(caChatname,pdu->caData,32);
-    c->m_strChatname = caChatname;//将当前的消息发送者存起来方便直接回消息
+    c->m_strChatname = caChatname; // 将当前的消息发送者存起来方便直接回消息
     c->setWindowTitle(caChatname);
     c->updateshow(pdu->caMsg);
 
@@ -137,9 +136,7 @@ void ResHandler::mkdir()
 
 void ResHandler::flushfile()
 {
-    int iCount = pdu->uiMsglen/sizeof(FileInfo);
-    qDebug()<<"iCount:"<<iCount;
-
+    int iCount = pdu->uiMsglen/sizeof(FileInfo); // 获取文件数量
     QList<FileInfo*> pFileList;
     for(int i=0;i<iCount;i++){
         FileInfo* pFileInfo = new FileInfo;
@@ -153,7 +150,6 @@ void ResHandler::movefile()
 {
     bool ret;
     memcpy(&ret,pdu->caData,sizeof(bool));
-    qDebug()<<"moveFile ret:"<<ret;
     if(ret){
         Index::getInstance().getFile()->flushFile();
     }else{
@@ -161,11 +157,10 @@ void ResHandler::movefile()
     }
 }
 
-void ResHandler::uploadFileInit()
+void ResHandler::uploadFileInit() // 先初始化，创建好文件但其中的内容待之后传输
 {
     bool ret;
     memcpy(&ret,pdu->caData,sizeof(bool));
-    qDebug()<<"uploadFileInit ret:"<<ret;
     if(ret){
         Index::getInstance().getFile()->uploadFile();
     }else{
@@ -173,14 +168,14 @@ void ResHandler::uploadFileInit()
     }
 }
 
-void ResHandler::uoloadFileData()
-{
-    Index::getInstance().getFile()->flushFile();
-}
 
-void ResHandler::startUpload()
+void ResHandler::startUpload() // 启用uploader线程循环读取上传文件内容
 {
     Uploader* uploader = new Uploader(Index::getInstance().getFile()->m_strUploadFilePath);
     uploader->start();
 }
 
+void ResHandler::uploadFileData() // 上传完成之后刷新
+{
+    Index::getInstance().getFile()->flushFile();
+}

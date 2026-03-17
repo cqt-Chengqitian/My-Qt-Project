@@ -17,29 +17,28 @@ class File : public QWidget
 public:
     explicit File(QWidget *parent = 0);
     ~File();
-    QString m_strUserPath;//因为files不在Client目录下，所以要存是谁的文件，初始位置是什么
-    QString m_strCurPath;
-    QList<FileInfo*> m_pFileInfoList;
-    QString m_strMoveFileName;
-    QString m_strMoveFilePath;
-    QString m_strUploadFilePath;//上传的文件路径
+    QString m_strUserPath; // 存储用户的文件路径
+    QString m_strCurPath; // 当前路径
+    QList<FileInfo*> m_pFileInfoList; // 文件列表
+    QString m_strMoveFileName; // 移动文件的名
+    QString m_strMoveFilePath; // 移动文件的路径
+    QString m_strUploadFilePath; // 上传的文件路径
 
-    void flushFile();
-    void updateFile_LW(QList<FileInfo*> pFileList);
+    void flushFile(); // 刷新文件列表
+    void updateFile_LW(QList<FileInfo*> pFileList); // 上传文件
     void uploadFile();
 
 public slots:
-    void errorSlot(QStirng error);
+    void errorSlot(QString error);
 
 private slots:
     void on_mkdir_Pb_clicked();
 
     void on_flush_Pb_clicked();
 
-    void on_listWidget_itemDoubleClicked(QListWidgetItem *item);
+    void on_listWidget_itemDoubleClicked(QListWidgetItem *item); // 双击选中展示窗口的文件
 
     void on_return_Pb_clicked();
-
 
     void on_remove_Pb_clicked();
 

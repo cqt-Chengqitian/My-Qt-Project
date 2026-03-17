@@ -15,6 +15,7 @@ Chat::~Chat()
     delete ui;
 }
 
+// 更新聊天框中的消息
 void Chat::updateshow(QString strMsg)
 {
     ui->show_Te->append(strMsg);
@@ -22,14 +23,14 @@ void Chat::updateshow(QString strMsg)
 
 void Chat::on_send_Pb_clicked()
 {
-    QString strMsg = ui->input_Le->text();
+    QString strMsg = ui->input_Le->text(); // 获取消息输入栏中的内容
     if(strMsg.isEmpty()){
         return;
     }
-    ui->input_Le->clear();//发送后清空
+    ui->input_Le->clear(); // 发送后清空
     PDU* pdu = mkPDU(strMsg.toStdString().size()+1);
     pdu->uiMsgtype = ENUM_MSG_TYPE_CHAT_REQUEST;
-    memcpy(pdu->caData,Client::getInstance().m_strLoginName.toStdString().c_str(),32);//发送人与接收人
+    memcpy(pdu->caData,Client::getInstance().m_strLoginName.toStdString().c_str(),32); // 传输发送人与接收人
     memcpy(pdu->caData+32,m_strChatname.toStdString().c_str(),32);
     memcpy(pdu->caMsg,strMsg.toStdString().c_str(),strMsg.toStdString().size());
     Client::getInstance().sendMsg(pdu);

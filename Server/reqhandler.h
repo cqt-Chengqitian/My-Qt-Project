@@ -11,9 +11,9 @@ public:
     ReqHandler();
     ~ReqHandler();
     PDU* pdu;
-    QFile m_fUploadFile;
-    qint64 m_iUploadFileSize;//上传的文件大小
-    qint64 m_iUploadReceived;//已经接收的文件大小
+    QFile m_fUploadFile; // 上传的文件对象
+    qint64 m_iUploadFileSize; // 上传的文件大小
+    qint64 m_iUploadReceived; // 已经接收的文件大小
     PDU* regist();
     PDU* login(QString& strLoginname);
     PDU* finduser();

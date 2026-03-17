@@ -17,7 +17,7 @@ enum ENUM_MSG_TYPE{//枚举值定义消息类型
     ENUM_MSG_TYPE_ADDFRIENT_RESPOND,
     ENUM_MSG_TYPE_AGREEADDFRIENT_REQUEST,//同意添加好友
     ENUM_MSG_TYPE_AGREEADDFRIENT_RESPOND,
-    ENUM_MSG_TYPE_FLUSHFRIENT_REQUEST,
+    ENUM_MSG_TYPE_FLUSHFRIENT_REQUEST,//刷新好友
     ENUM_MSG_TYPE_FLUSHFRIENT_RESPOND,
     ENUM_MSG_TYPE_CHAT_REQUEST,//聊天
     ENUM_MSG_TYPE_CHAT_RESPOND,
@@ -47,7 +47,7 @@ PDU* mkPDU(uint uiMsglen = 0);
 
 struct FileInfo{
     char caName[32];
-    int iType;
+    int iType; // 文件类型，是文件还是文件夹
 };
 #endif // PROTOCE
 

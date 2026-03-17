@@ -14,11 +14,11 @@ class Chat : public QWidget
 public:
     explicit Chat(QWidget *parent = 0);
     ~Chat();
-    QString m_strChatname;
-    void updateshow(QString strMsg);
+    QString m_strChatname; // 聊天对象的名字
+    void updateshow(QString strMsg); // 更新聊天窗口中的消息
 
 private slots:
-    void on_send_Pb_clicked();
+    void on_send_Pb_clicked(); // 点击发送按钮
 
 private:
     Ui::Chat *ui;

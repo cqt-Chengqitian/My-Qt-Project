@@ -144,59 +144,34 @@ PDU *ReqHandler::mkdir()
 
 PDU *ReqHandler::flushfile()
 {
-    // 1. 读取客户端请求的路径
-        QString strCurPath = pdu->caMsg;
-        QDir dir(strCurPath);
-        QFileInfoList fileInfoList = dir.entryInfoList(); // 获取目录下所有文件信息
+    // 读取客户端请求的路径
+    QString strCurPath = pdu->caMsg;
+    QDir dir(strCurPath);
+    QFileInfoList fileInfoList = dir.entryInfoList(); // 获取目录下所有文件信息
 
-        // 2. 筛选掉 . 和 .. —— 核心修复：foreach 循环正确遍历 QFileInfo
-        QList<QFileInfo> validFiles; // 存储有效文件信息（QFileInfo 类型，而非 int）
-        // 正确的 foreach 循环：遍历 QFileInfoList 中的 QFileInfo 对象
-        foreach (const QFileInfo &info, fileInfoList) {
-            // 修复：判断条件用 ==，且语法正确（原代码可能少写 || 或括号）
-            if (info.fileName() == "." || info.fileName() == "..") {
-                continue; // 跳过 . 和 ..
-            }
-            validFiles.append(info); // 追加 QFileInfo 对象，而非 int
+    // 筛选掉 . 和 .. —— 核心修复：foreach 循环正确遍历 QFileInfo
+    QList<QFileInfo> validFiles; // 存储有效文件信息（QFileInfo 类型，而非 int）
+    foreach (const QFileInfo &info, fileInfoList) {
+        if (info.fileName() == "." || info.fileName() == "..") {
+            continue; // 跳过 . 和 ..
         }
+        validFiles.append(info);
+    }
 
-        // 3. 构造合法的 PDU 响应
-        int validCount = validFiles.size();
-        PDU* respdu = mkPDU(sizeof(FileInfo) * validCount); // 正确计算内存大小
-        respdu->uiMsgtype = ENUM_MSG_TYPE_FLUSHFILE_RESPOND;
+    int validCount = validFiles.size();
+    PDU* respdu = mkPDU(sizeof(FileInfo) * validCount);
+    respdu->uiMsgtype = ENUM_MSG_TYPE_FLUSHFILE_RESPOND;
 
-        // 4. 填充 FileInfo 数据（按 sizeof(FileInfo) 偏移，避免内存越界）
-        for (int i = 0; i < validCount; i++) {
-            FileInfo* pFileInfo = (FileInfo*)(respdu->caMsg + i * sizeof(FileInfo));
-            // 拷贝文件名（最多32字节，确保字符串结束符）
-            memset(pFileInfo->caName, '\0', 32); // 先清空，避免乱码
-            memcpy(pFileInfo->caName, validFiles.at(i).fileName().toUtf8().data(),
-                   qMin(validFiles.at(i).fileName().size(), 31)); // 留1字节存结束符
-            // 设置文件类型：0=文件夹，1=文件
-            pFileInfo->iType = validFiles.at(i).isDir() ? 0 : 1;
-        }
-
-        return respdu;
-//    QString strCurPath = pdu->caMsg;
-//    QDir dir(strCurPath);
-//    QFileInfoList fileInfoList = dir.entryInfoList();
-//    int iFileCount = fileInfoList.size();
-//    PDU* respdu = mkPDU(sizeof(FileInfo)*iFileCount-2); // 筛去.与..
-//    respdu->uiMsgtype = ENUM_MSG_TYPE_FLUSHFILE_RESPOND;
-//    int t = 0; // 避免continue造成的位置偏移
-//    for(int i=0;i<fileInfoList.size();i++){
-//        if(fileInfoList.at(i).fileName()=="."||fileInfoList.at(i).fileName()==".."){
-//            continue;
-//        }
-//        FileInfo* pFileInfo = (FileInfo*)respdu->caMsg+t++;
-//        memcpy(pFileInfo->caName,fileInfoList.at(i).fileName().toStdString().c_str(),32);
-//        if(fileInfoList.at(i).isDir()){
-//            pFileInfo->iType = 0;
-//        }else{
-//            pFileInfo->iType = 1;
-//        }
-//    }
-//    return respdu;
+    // 填充 FileInfo 数据
+    for (int i = 0; i < validCount; i++) {
+        FileInfo* pFileInfo = (FileInfo*)(respdu->caMsg + i * sizeof(FileInfo));
+        memset(pFileInfo->caName, '\0', 32); // 先清空，避免乱码
+        memcpy(pFileInfo->caName, validFiles.at(i).fileName().toUtf8().data(),
+               qMin(validFiles.at(i).fileName().size(), 31)); // 留1字节存结束符
+        // 设置文件类型：0=文件夹，1=文件
+        pFileInfo->iType = validFiles.at(i).isDir() ? 0 : 1;
+    }
+    return respdu;
 }
 
 PDU *ReqHandler::movefile()

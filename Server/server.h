@@ -13,13 +13,13 @@ class Server : public QWidget
     Q_OBJECT
 
 public:
-    QTcpSocket m_tcpSocket;
-    QString m_strIP;
-    quint16 m_usPort;
-    QString m_strRootPath;
+    QTcpSocket m_tcpSocket; // 使用的socket
+    QString m_strIP; // 配置的IP地址
+    quint16 m_usPort; // 配置的端口号
+    QString m_strRootPath; // 根路径
 
     ~Server();
-    void loadconfig();
+    void loadconfig(); // 加载配置
     static Server& getInstance();
 
 private:

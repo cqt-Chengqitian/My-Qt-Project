@@ -19,9 +19,12 @@ ClientTask::ClientTask(MyTcpSocket *socket)
 
 void ClientTask::run()
 {
-    //在这里关联就会在这个线程执行，因为socket不能跨线程执行
+    // 在这里关联就会在这个线程执行，因为socket不能跨线程执行
     connect(mySocket,&QTcpSocket::readyRead,mySocket,&MyTcpSocket::recvMsg);
-    connect(mySocket,&QTcpSocket::disconnected,mySocket,&MyTcpSocket::clientOffline);//连接下线信号
-    mySocket->moveToThread(QThread::currentThread());
+    connect(mySocket,&QTcpSocket::disconnected,mySocket,&MyTcpSocket::clientOffline); // 连接下线信号
+    //mySocket->moveToThread(QThread::currentThread());
+    // 3. 可选：设置AutoDelete避免Task提前销毁
+    this->setAutoDelete(false);
+    connect(mySocket, &MyTcpSocket::destroyed, this, &ClientTask::deleteLater);
 }
 

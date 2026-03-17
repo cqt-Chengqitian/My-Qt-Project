@@ -13,8 +13,8 @@ public:
     explicit ClientTask(QObject *parent = 0);
     ~ClientTask();
     ClientTask(MyTcpSocket* socket);
-    void run() override;
-    MyTcpSocket*mySocket;
+    void run() override; // 重写的执行的任务
+    MyTcpSocket* mySocket;
 
 signals:
 

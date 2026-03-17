@@ -46,7 +46,7 @@ void Friend::on_find_Pb_clicked()
     PDU* pdu = mkPDU();
     pdu->uiMsgtype = ENUM_MSG_TYPE_FINDUSER_REQUEST;
     memcpy(pdu->caData,strName.toStdString().c_str(),32);
-    Client::getInstance().m_tcpSocket.write((char*)pdu,pdu->uiPDUlen);
+    //Client::getInstance().m_tcpSocket.write((char*)pdu,pdu->uiPDUlen);
     Client::getInstance().sendMsg(pdu);
 }
 
